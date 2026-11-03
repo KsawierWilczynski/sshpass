@@ -2,24 +2,26 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 )
 
-func hello(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintf(w, "hello /n")
-}
-
-func headers (w http.ResponseWriter, req *http.Request) {
-	for name, headers := range req.Header {
-		for _, h := range headers {
-			fmt.Fprintf(w, "%v: %v\n", name, h)
-		}
-	}
-}
 
 func main() {
-	http.HandleFunc("/hello", hello)
-	http.HandleFunc("/headers", headers)
+	registerEndpoints()
 
-	http.ListenAndServe(":8090", nil)
+	log.Fatal(http.ListenAndServe(":1337", nil))
+}
+
+func registerEndpoints() {
+	http.HandleFunc("GET /auth", helloWorld)
+	http.HandleFunc("GET /refresh", helloWorld)
+	http.HandleFunc("POST /execute/{user}/{session}", helloWorld)
+	http.HandleFunc("POST /createSession/{user}", helloWorld)
+	http.HandleFunc("GET /history/{user}/{session}", helloWorld)
+	http.HandleFunc("POST /stopSession/{user}/{session}", helloWorld)
+}
+
+func helloWorld(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello World")
 }
